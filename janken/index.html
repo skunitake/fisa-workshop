@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AIとじゃんけん！</title>
+  <link rel="stylesheet" href="index.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <span class="eyebrow">AIを育てて、対戦しよう！</span>
+    <h1>AIとじゃんけん</h1>
+    <p>自分で作ったAIと、じゃんけん勝負！</p>
+  </header>
+  <section class="panel">
+    <h2><span class="num">1</span>AIモデルを選ぼう</h2>
+    <p>Teachable MachineでダウンロードしたZIPファイルを選びます</p>
+    <label class="filepick" for="zipInput">ZIPファイルを選ぶ
+      <input id="zipInput" type="file" accept=".zip,application/zip">
+    </label>
+    <p id="modelStatus" class="status" role="status">モデルを選ぶと読み込みます。</p>
+  </section>
+  
+  <section class="panel">
+    <h2><span class="num">2</span> カメラを準備しよう</h2>
+    <div class="buttons">
+      <button id="start" disabled>カメラを起動</button>
+      <button id="stop" class="secondary" disabled>カメラを止める</button>
+    </div>
+    <p id="cameraStatus" class="status" role="status">モデルを読み込んでからカメラを起動します。</p>
+  </section>
+  <section class="panel">
+    <h2><span class="num">3</span> じゃんけん勝負！</h2>
+
+    <div class="arena">
+      <div class="player">
+        <h3>あなたの手</h3>
+        <div class="camera">
+          <video id="video" autoplay playsinline muted></video>
+          <div id="cameraPlaceholder">
+            <small>ここにカメラが映るよ</small>
+          </div>
+        </div>
+        <p class="hand" id="playerHand">？</p>
+        <p id="confidence" class="small">認識待ち</p>
+      </div>
+      <div class="player">
+        <h3>AIの手</h3>
+        <div class="aiHand" id="aiHand" aria-label="AIの手">❔</div>
+        <p class="hand" id="aiName">？</p>
+        <p class="small">ランダムで出すよ！</p>
+      </div>
+    </div>
+    <div class="action">
+      <button id="play" class="play" disabled>じゃんけん！</button>
+      <p id="result" class="result" aria-live="polite">カメラに手を見せて、勝負しよう！</p>
+      <p id="score">あなたの勝ち 0回 ／ AIの勝ち 0回 ／ あいこ 0回</p>
+      <button id="reset" class="secondary">成績をリセット</button>
+    </div>
+  </section>
+  <footer>画像の認識はこのブラウザ内で行います。カメラ映像やZIPファイルをアプリのサーバーへ送信する処理はありません。</footer>
+</main>
+<script src="index.js"></script>
+</body>
+</html>
