@@ -65,7 +65,7 @@ async function loadZip(file) {
     const [weightBytes, metadataText] = await Promise.all([weightsEntry.async('uint8array'), metadataEntry.async('string')]);
     const metadata = JSON.parse(metadataText);
     const classes = (metadata.labels || []).map(normalizeHand);
-    if (classes.length !== 4 || new Set(classes).size !== 4 || classes.some(x => !x)) throw new Error('クラス名を「グー」「チョキ」「パー」の3種類にしてください（現在: ' + (metadata.labels || []).join('、') + '）。');
+    if (classes.length !== 4 || new Set(classes).size !== 4 || classes.some(x => !x) || !['グー','チョキ','パー','手なし'].every(x => classes.includes(x))) throw new Error('クラス名を「グー」「チョキ」「パー」「手なし」の4種類にしてください（現在: ' + (metadata.labels || []).join('、') + '）。');
     const modelFile = new File([modelText], 'model.json', {type:'application/json'});
     const weightFile = new File([weightBytes], weightName, {type:'application/octet-stream'});
     const metadataFile = new File([metadataText], 'metadata.json', {type:'application/json'});
