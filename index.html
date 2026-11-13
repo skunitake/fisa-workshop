@@ -2,10 +2,37 @@
 <html lang="ja">
     <head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>わたしのAIカメラ</title>
+    <title>AIカメラ</title>
 
     <style>
-      :root{font-family:system-ui,-apple-system,'Yu Gothic',Meiryo,sans-serif;color:#203047;background:#f4f8ff}*{box-sizing:border-box}body{margin:0;padding:24px 14px}.wrap{max-width:750px;margin:auto}header{text-align:center;margin-bottom:22px}h1{font-size:clamp(26px,5vw,38px);margin:0;color:#2253a0}header p{margin:9px 0;color:#4e6078}.panel{background:white;border-radius:20px;padding:22px;box-shadow:0 6px 24px #173e7913;margin:16px 0}h2{font-size:20px;margin:0 0 14px}.step{display:inline-grid;place-items:center;background:#2563eb;color:white;border-radius:50%;height:30px;width:30px;margin-right:7px}.hint{color:#54647b;font-size:14px;line-height:1.7}.pick{display:block;border:2px dashed #7ba4ea;border-radius:14px;padding:20px;text-align:center;cursor:pointer;background:#f4f8ff;font-weight:bold}.pick input{display:block;margin:12px auto 0;max-width:100%}button{border:0;border-radius:12px;background:#2563eb;color:white;font-weight:bold;font-size:17px;padding:13px 20px;cursor:pointer}button:disabled{background:#aebbd0;cursor:not-allowed}.secondary{background:#5d6d85}.actions{display:flex;gap:10px;flex-wrap:wrap}video{width:100%;max-height:400px;object-fit:contain;background:#192433;border-radius:15px;transform:scaleX(-1)}.result{text-align:center;background:#eaf3ff;padding:20px;border-radius:14px;margin-top:15px}.result strong{font-size:clamp(25px,6vw,43px);display:block;overflow-wrap:anywhere}.score{font-size:20px;color:#305487}.barrow{display:grid;grid-template-columns:minmax(85px,1fr) 2fr 54px;gap:8px;align-items:center;margin:10px 0;font-size:14px}.track{height:13px;background:#dce7f6;border-radius:99px;overflow:hidden}.fill{height:100%;background:#4386ed;width:0}.status{padding:12px 14px;background:#edf3fc;border-radius:10px;margin-top:14px;line-height:1.6}.error{background:#fff0ef;color:#a12626}.foot{text-align:center;font-size:12px;color:#607087;line-height:1.8} [hidden]{display:none!important}
+      :root{font-family:system-ui,-apple-system,'Yu Gothic',Meiryo,sans-serif;color:#203047;background:#f4f8ff}
+      *{box-sizing:border-box}
+      body{margin:0;padding:24px 14px}
+      .wrap{max-width:750px;margin:auto}
+      header{text-align:center;margin-bottom:22px}
+      h1{font-size:clamp(26px,5vw,38px);margin:0;color:#2253a0}
+      header p{margin:9px 0;color:#4e6078}
+      .panel{background:white;border-radius:20px;padding:22px;box-shadow:0 6px 24px #173e7913;margin:16px 0}
+      h2{font-size:20px;margin:0 0 14px}
+      .step{display:inline-grid;place-items:center;background:#2563eb;color:white;border-radius:50%;height:30px;width:30px;margin-right:7px}
+      .hint{color:#54647b;font-size:14px;line-height:1.7}
+      .pick{display:block;border:2px dashed #7ba4ea;border-radius:14px;padding:20px;text-align:center;cursor:pointer;background:#f4f8ff;font-weight:bold}
+      .pick input{display:block;margin:12px auto 0;max-width:100%}
+      button{border:0;border-radius:12px;background:#2563eb;color:white;font-weight:bold;font-size:17px;padding:13px 20px;cursor:pointer}
+      button:disabled{background:#aebbd0;cursor:not-allowed}
+      .secondary{background:#5d6d85}
+      .actions{display:flex;gap:10px;flex-wrap:wrap}
+      video{width:100%;max-height:400px;object-fit:contain;background:#192433;border-radius:15px;transform:scaleX(-1)}
+      .result{text-align:center;background:#eaf3ff;padding:20px;border-radius:14px;margin-top:15px}
+      .result strong{font-size:clamp(25px,6vw,43px);display:block;overflow-wrap:anywhere}
+      .score{font-size:20px;color:#305487}
+      .barrow{display:grid;grid-template-columns:minmax(85px,1fr) 2fr 54px;gap:8px;align-items:center;margin:10px 0;font-size:14px}
+      .track{height:13px;background:#dce7f6;border-radius:99px;overflow:hidden}
+      .fill{height:100%;background:#4386ed;width:0}
+      .status{padding:12px 14px;background:#edf3fc;border-radius:10px;margin-top:14px;line-height:1.6}
+      .error{background:#fff0ef;color:#a12626}
+      .foot{text-align:center;font-size:12px;color:#607087;line-height:1.8} 
+      [hidden]{display:none!important}
     </style>
     
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
@@ -16,82 +43,171 @@
     <body>
         <main class="wrap">
             <header>
-                <h1>📷 わたしのAIカメラ</h1>
+                <h1>AIカメラ</h1>
                 <p>自分で育てたAIを、カメラで試してみよう！</p>
             </header>
             <section class="panel">
                 <h2><span class="step">1</span>AIモデルを選ぼう</h2>
                 <label class="pick">Teachable MachineでダウンロードしたZIPファイルを選んでね<input id="zipInput" type="file" accept=".zip,application/zip"></label>
-                <p class="hint">「TensorFlow.js」形式でダウンロードした画像モデルに対応しています。ZIPは解凍しなくてOK！</p>
+                <p class="hint">「TensorFlow.js」形式でダウンロードした画像モデルに対応しています。</p>
                 <div id="modelStatus" class="status" role="status">モデルを選ぶと読み込みます。</div>
             </section>
             <section class="panel">
                 <h2><span class="step">2</span>カメラで試そう</h2>
                 <div class="actions">
-                    <button id="start" disabled>📷 カメラを起動</button>
-                    <button id="stop" class="secondary" disabled>■ カメラを止める</button>
+                    <button id="start" disabled>カメラを起動</button>
+                    <button id="stop" class="secondary" disabled>カメラを止める</button>
                 </div>
-                <p class="hint">初回はブラウザからカメラの使用許可を求められます。「許可」を選んでね。</p>
+                <p class="hint">初回はブラウザからカメラの使用許可を求められます。「許可」を選びます。</p>
                 <video id="video" autoplay muted playsinline hidden></video>
                 <div id="result" class="result" hidden><span>AIがいちばん近いと思ったもの</span><strong id="topLabel">―</strong><span class="score" id="topScore"></span></div>
                 <div id="bars" aria-live="off"></div><div id="cameraStatus" class="status" role="status">モデルを読み込んでからカメラを起動してね。</div>
             </section>
             <p class="foot">画像認識はこの端末のブラウザ内で行います。選んだモデルやカメラ画像を、このページからサーバーに送信する処理はありません。<br>
-                AIの判定は間違うこともあるよ。いろいろ試してみよう！</p>
+                AIの判定は間違うこともある。いろいろ試してみよう！</p>
         </main>
 
-    <script>
+<script>
 'use strict';
 const $=id=>document.getElementById(id);
 let model=null,stream=null,loopId=null,busy=false;
-function status(id,msg,error=false){$(id).textContent=msg;$(id).classList.toggle('error',error)}
-function resetResult(){$('result').hidden=true;$('bars').replaceChildren()}
-function stopCamera(){if(loopId!==null){cancelAnimationFrame(loopId);loopId=null}if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('video').pause();$('video').srcObject=null;$('video').hidden=true;$('stop').disabled=true;$('start').disabled=!model;status('cameraStatus','カメラは停止しています。')}
-function getFile(zip,name){const paths=Object.keys(zip.files);return paths.find(p=>!zip.files[p].dir&&(p===name||p.endsWith('/'+name))&&!p.startsWith('__MACOSX/'))}
+
+function status(id,msg,error=false){
+    $(id).textContent=msg;
+    $(id).classList.toggle('error',error)
+}
+
+function resetResult(){
+    $('result').hidden=true;
+    $('bars').replaceChildren()
+}
+
+function stopCamera(){
+    if(loopId!==null){
+        cancelAnimationFrame(loopId);loopId=null
+    }
+    if(stream){
+        stream.getTracks().forEach(t=>t.stop());stream=null
+    }
+    $('video').pause();
+    $('video').srcObject=null;
+    $('video').hidden=true;
+    $('stop').disabled=true;
+    $('start').disabled=!model;
+    status('cameraStatus','カメラは停止しています。')
+}
+
+function getFile(zip,name){
+    const paths=Object.keys(zip.files);
+    return paths.find(p=>!zip.files[p].dir&&(p===name||p.endsWith('/'+name))&&!p.startsWith('__MACOSX/'))
+}
+
 $('zipInput').addEventListener('change',async()=>{
- stopCamera();resetResult();model=null;$('start').disabled=true;
- const file=$('zipInput').files[0];if(!file){status('modelStatus','ZIPファイルを選んでね。');return}
- status('modelStatus','モデルを読み込んでいます…');
- try{
-  if(!window.tf||!window.tmImage||!window.JSZip)throw Error('必要なライブラリを読み込めません。ネット接続を確認してページを再読み込みしてね。');
-  const zip=await JSZip.loadAsync(file);const mp=getFile(zip,'model.json'),meta=getFile(zip,'metadata.json');
-  if(!mp||!meta)throw Error('model.json または metadata.json が見つかりません。TensorFlow.js形式の画像モデルZIPを選んでね。');
-  const modelJson=JSON.parse(await zip.file(mp).async('string'));
-  const paths=(modelJson.weightsManifest||[]).flatMap(x=>x.paths||[]);
-  if(paths.length!==1)throw Error('このモデルの重みファイル構成には未対応です。通常のTeachable Machine画像モデル（weights.binが1個）を使ってね。');
-  const base=mp.slice(0,mp.lastIndexOf('/')+1);const weightPath=base+paths[0];
-  if(!zip.file(weightPath))throw Error('重みファイルが見つかりません: '+paths[0]);
-  const modelFile=new File([await zip.file(mp).async('blob')],'model.json',{type:'application/json'});
-  const metadataFile=new File([await zip.file(meta).async('blob')],'metadata.json',{type:'application/json'});
-  const weightFile=new File([await zip.file(weightPath).async('blob')],paths[0],{type:'application/octet-stream'});
-  model=await tmImage.loadFromFiles(modelFile,weightFile,metadataFile);
-  const labels=model.getClassLabels();if(!labels||!labels.length)throw Error('クラス名が見つかりません。');
-  status('modelStatus','✅ 読み込み成功！ '+labels.length+'種類を認識できます：'+labels.join('・'));
-  $('start').disabled=false;status('cameraStatus','「カメラを起動」を押してね！');
- }catch(e){console.error(e);status('modelStatus','読み込めませんでした：'+e.message,true)}
+    stopCamera();
+    resetResult();
+    model=null;
+    $('start').disabled=true;
+    const file=$('zipInput').files[0];
+    if(!file){
+        status('modelStatus','ZIPファイルを選んでね。');
+        return
+    }
+    
+    status('modelStatus','モデルを読み込んでいます…');
+    
+    try{
+        if(!window.tf||!window.tmImage||!window.JSZip)throw Error('必要なライブラリを読み込めません。ネット接続を確認してページを再読み込みしてね。');
+        const zip=await JSZip.loadAsync(file);
+        const mp=getFile(zip,'model.json'),meta=getFile(zip,'metadata.json');
+        
+        if(!mp||!meta)throw Error('model.json または metadata.json が見つかりません。TensorFlow.js形式の画像モデルZIPを選んでね。');
+        
+        const modelJson=JSON.parse(await zip.file(mp).async('string'));
+        const paths=(modelJson.weightsManifest||[]).flatMap(x=>x.paths||[]);
+        
+        if(paths.length!==1)throw Error('このモデルの重みファイル構成には未対応です。通常のTeachable Machine画像モデル（weights.binが1個）を使ってね。');
+
+        const base=mp.slice(0,mp.lastIndexOf('/')+1);
+        const weightPath=base+paths[0];
+
+        if(!zip.file(weightPath))throw Error('重みファイルが見つかりません: '+paths[0]);
+
+        const modelFile=new File([await zip.file(mp).async('blob')],'model.json',{type:'application/json'});
+        const metadataFile=new File([await zip.file(meta).async('blob')],'metadata.json',{type:'application/json'});
+        const weightFile=new File([await zip.file(weightPath).async('blob')],paths[0],{type:'application/octet-stream'});
+        model=await tmImage.loadFromFiles(modelFile,weightFile,metadataFile);
+        const labels=model.getClassLabels();if(!labels||!labels.length)throw Error('クラス名が見つかりません。');
+        status('modelStatus','✅ 読み込み成功！ '+labels.length+'種類を認識できます：'+labels.join('・'));
+        $('start').disabled=false;status('cameraStatus','「カメラを起動」を押してね！');
+    }catch(e){console.error(e);status('modelStatus','読み込めませんでした：'+e.message,true)}
 });
+
 $('start').addEventListener('click',async()=>{
- if(!model)return;$('start').disabled=true;status('cameraStatus','カメラを準備しています…');
- try{
-  if(!navigator.mediaDevices?.getUserMedia)throw Error('カメラを利用できません。HTTPSのページをEdge/Chromeで開いてね。');
-  stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'user',width:{ideal:640},height:{ideal:480}}});
-  const video=$('video');video.srcObject=stream;await video.play();video.hidden=false;$('stop').disabled=false;
-  status('cameraStatus','認識中！ カメラにいろいろ映してみよう。');
-  const tick=async()=>{if(!stream)return;if(!busy){busy=true;try{
-   const predictions=await model.predict(video);if(!stream)return;
-   const sorted=[...predictions].sort((a,b)=>b.probability-a.probability);const best=sorted[0];
-   $('result').hidden=false;$('topLabel').textContent=best.className;$('topScore').textContent='確信度 '+Math.round(best.probability*100)+'%';
-   const root=$('bars');root.replaceChildren();for(const p of predictions){
-    const row=document.createElement('div');row.className='barrow';const label=document.createElement('span');label.textContent=p.className;
-    const track=document.createElement('div');track.className='track';const fill=document.createElement('div');fill.className='fill';fill.style.width=(p.probability*100).toFixed(1)+'%';track.append(fill);
-    const score=document.createElement('span');score.textContent=Math.round(p.probability*100)+'%';row.append(label,track,score);root.append(row);
-   }
-  }catch(e){console.error(e);status('cameraStatus','認識エラー：'+e.message,true);stopCamera();return}finally{busy=false}}
-  loopId=requestAnimationFrame(tick)};loopId=requestAnimationFrame(tick);
- }catch(e){console.error(e);status('cameraStatus','カメラを起動できません：'+e.message,true);stopCamera();status('cameraStatus','カメラを起動できません：'+e.message,true)}
-});
+    if(!model)return;$('start').disabled=true;status('cameraStatus','カメラを準備しています…');
+    
+    try{
+        if(!navigator.mediaDevices?.getUserMedia)throw Error('カメラを利用できません。HTTPSのページをEdge/Chromeで開いてね。');
+        
+        stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'user',width:{ideal:640},height:{ideal:480}}});
+        const video=$('video');
+        video.srcObject=stream;
+        await video.play();
+        video.hidden=false;
+        $('stop').disabled=false;
+        
+        status('cameraStatus','認識中！ カメラにいろいろ映してみよう。');
+        const tick=async()=>{if(!stream)return;if(!busy){busy=true;
+            
+            try{
+                const predictions=await model.predict(video);
+                if(!stream)return;
+                const sorted=[...predictions].sort((a,b)=>b.probability-a.probability);
+                const best=sorted[0];
+                
+                $('result').hidden=false;
+                $('topLabel').textContent=best.className;
+                $('topScore').textContent='確信度 '+Math.round(best.probability*100)+'%';
+                
+                const root=$('bars');
+                root.replaceChildren();
+                for(const p of predictions){
+                    const row=document.createElement('div');
+                    row.className='barrow';
+                    const label=document.createElement('span');
+                    label.textContent=p.className;
+                    const track=document.createElement('div');
+                    track.className='track';
+                    const fill=document.createElement('div');
+                    fill.className='fill';
+                    fill.style.width=(p.probability*100).toFixed(1)+'%';
+                    track.append(fill);
+                    const score=document.createElement('span');
+                    score.textContent=Math.round(p.probability*100)+'%';
+                    row.append(label,track,score);
+                    root.append(row);
+                }
+            }catch(e){
+                console.error(e);
+                status('cameraStatus','認識エラー：'+e.message,true);
+                stopCamera();return}finally{
+                    busy=false
+                }
+            }
+            
+            loopId=requestAnimationFrame(tick)};
+            loopId=requestAnimationFrame(tick);
+        }catch(e){
+            console.error(e);
+            status('cameraStatus','カメラを起動できません：'+e.message,true);
+            stopCamera();
+            status('cameraStatus','カメラを起動できません：'+e.message,true)
+        }
+    }
+);
+
 $('stop').addEventListener('click',stopCamera);window.addEventListener('pagehide',stopCamera);
 
-    </script>
-  </body>
+
+</script>
+</body>
 </html>
