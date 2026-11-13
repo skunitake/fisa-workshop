@@ -21,6 +21,7 @@ function normalizeHand(label) {
   if (s === 'グー' || s === 'ぐー' || s === 'gu' || s === 'goo' || s === 'rock') return 'グー';
   if (s === 'チョキ' || s === 'ちょき' || s === 'choki' || s === 'scissors') return 'チョキ';
   if (s === 'パー' || s === 'ぱー' || s === 'pa' || s === 'paper') return 'パー';
+  if (s === '手なし' || s === '手無し' || s === 'てなし' || s === 'nohand' || s === 'none' || s === 'empty') return '手なし';
   return null;
 }
 
@@ -118,7 +119,7 @@ async function predictLoop() {
       const top = predictions.reduce((best, x) => x.probability > best.probability ? x : best, predictions[0]);
       const hand = normalizeHand(top.className);
       latest = {hand, confidence: top.probability, time: performance.now()};
-      $('playerHand').textContent = hand ? EMOJI[hand] + ' ' + hand : '認識できません';
+      $('playerHand').textContent = hand === '手なし' ? '🖐️ 手なし' : (hand ? EMOJI[hand] + ' ' + hand : '認識できません');
       $('confidence').textContent = 'AIの認識率：' + Math.round(top.probability * 100) + '%';
     } catch (err) {
       console.error(err);
@@ -131,6 +132,10 @@ async function predictLoop() {
 
 function playGame() {
   if (!running || !model) return;
+  if (latest?.hand === '手なし' && latest.confidence >= MIN_CONFIDENCE && performance.now() - latest.time <= 1500) {
+    $('result').textContent = '🖐️ カメラに手を映してね！';
+    return;
+  }
   if (!latest || !latest.hand || latest.confidence < MIN_CONFIDENCE || performance.now() - latest.time > 1500) {
     $('result').textContent = '🤔 手がよく見えないみたい。カメラにしっかり映してね！';
     return;
